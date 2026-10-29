@@ -2,10 +2,10 @@ import { ChangeEvent, Dispatch, SetStateAction } from "react"
 
 type Props = {
     list: string[],
-    setForm: Dispatch<SetStateAction<test>>
+    setForm: Dispatch<SetStateAction<RecodeFormValues>>
 }
 
-type test = {
+type RecodeFormValues = {
     title: string, 
     category: string
 }
@@ -28,7 +28,7 @@ export default function Select({ list, setForm }: Props) {
             {
                 list.map(item => {
                     return (
-                         <option>{item}</option>
+                         <option key={item}>{item}</option>
                     )
                 })
             }

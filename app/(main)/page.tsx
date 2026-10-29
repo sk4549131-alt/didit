@@ -18,7 +18,6 @@ export default function Page() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
                 </button>
             </div>
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-sm font-medium text-brand">지</span>
         </header>
 
         <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-10 px-14 pb-16 pt-14">

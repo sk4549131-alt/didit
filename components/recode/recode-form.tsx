@@ -2,7 +2,9 @@
 
 import Select from "@/components/ui/select";
 import RecodeList from "@/components/recode/recode-list";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+// utils
+import { dateKey } from "@/app/utils/storage";
 
 type RecordType = {
     id: number
@@ -12,20 +14,38 @@ type RecordType = {
 }
 
 export default function RecordForm() {
-    const [records, setRecords] = useState<RecordType[]>([]);
+    const [records, setRecords] = useState<Record<string, RecordType[]>>({});
     const [form, setForm] = useState({ title: '', category: '일상' });
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        console.log("load effect", performance.now());
+        const raw = localStorage.getItem("items");
+        if (raw) setRecords(JSON.parse(raw));
+        setLoaded(true);
+    }, []);
+
+    useEffect(() => {
+        console.log("save effect", { loaded, count: records.length });
+        if (loaded) localStorage.setItem("items", JSON.stringify(records));
+    }, [records, loaded]);
 
     function addList() {
         if (form?.title !== '') {
-            setRecords(prev => [
+            const date = dateKey();
+            setRecords(prev => ({
                 ...prev,
-                { 
-                    id: Date.now(),
-                    title: form.title, 
-                    time: new Date().toLocaleTimeString(),
-                    category: form.category
-                }
-            ]);
+                [date]: [
+                    ...prev[date] ?? [],
+                    { 
+                        id: Date.now(),
+                        title: form.title, 
+                        time: new Date().toLocaleTimeString(),
+                        category: form.category
+                    }
+                ] 
+            }));
+
             setForm({ title: '', category: '일상' });
         }
     }
@@ -39,10 +59,10 @@ export default function RecordForm() {
                 <p className="mt-4 text-[15px] text-muted">해야 할 일보다, 해낸 일에 집중하는 시간</p>
             </div>
             <div className="flex items-center gap-4 rounded-2xl border border-line bg-white/60 px-7 py-5">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">{records.length}</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">{Object(records).length}</span>
                 <div>
                     <p className="text-xs text-muted">오늘의 완료</p>
-                    <p className="text-[15px] font-bold">{records.length}개의 작은 성취</p>
+                    <p className="text-[15px] font-bold">{Object(records).length}개의 작은 성취</p>
                 </div>
             </div>
         </section>
