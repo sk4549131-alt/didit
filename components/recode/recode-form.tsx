@@ -3,8 +3,11 @@
 import Select from "@/components/ui/select";
 import RecodeList from "@/components/recode/recode-list";
 import { useState, useEffect } from "react";
-// utils
-import { dateKey } from "@/app/utils/storage";
+
+type Props = {
+    date: string,
+    atToday: boolean
+}
 
 type RecordType = {
     id: number
@@ -13,26 +16,26 @@ type RecordType = {
     category: string
 }
 
-export default function RecordForm() {
+export default function RecordForm({ date, atToday } : Props) {
     const [records, setRecords] = useState<Record<string, RecordType[]>>({});
     const [form, setForm] = useState({ title: '', category: '일상' });
     const [loaded, setLoaded] = useState(false);
+    const todayCount = records[date]?.length ?? 0;
 
     useEffect(() => {
         console.log("load effect", performance.now());
-        const raw = localStorage.getItem("items");
+        const raw = localStorage.getItem('items');
         if (raw) setRecords(JSON.parse(raw));
         setLoaded(true);
     }, []);
 
     useEffect(() => {
-        console.log("save effect", { loaded, count: records.length });
+        console.log("save effect", { loaded, count: Object.keys(records).length });
         if (loaded) localStorage.setItem("items", JSON.stringify(records));
     }, [records, loaded]);
 
     function addList() {
-        if (form?.title !== '') {
-            const date = dateKey();
+        if (form?.title !== '') {;
             setRecords(prev => ({
                 ...prev,
                 [date]: [
@@ -59,10 +62,10 @@ export default function RecordForm() {
                 <p className="mt-4 text-[15px] text-muted">해야 할 일보다, 해낸 일에 집중하는 시간</p>
             </div>
             <div className="flex items-center gap-4 rounded-2xl border border-line bg-white/60 px-7 py-5">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">{Object(records).length}</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">{todayCount}</span>
                 <div>
                     <p className="text-xs text-muted">오늘의 완료</p>
-                    <p className="text-[15px] font-bold">{Object(records).length}개의 작은 성취</p>
+                    <p className="text-[15px] font-bold">{todayCount}개의 작은 성취</p>
                 </div>
             </div>
         </section>
@@ -78,6 +81,7 @@ export default function RecordForm() {
                             placeholder="작은 일도 좋아요. 완료한 일을 적어보세요."
                             className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted/70"
                             value={form.title}
+                            disabled={atToday}
                             onChange={
                                 (e) => {
                                     setForm(prev => ({
@@ -98,7 +102,7 @@ export default function RecordForm() {
                 </div>
             </div>
 
-            <RecodeList records={records} setRecords={setRecords}/>
+            <RecodeList records={records} setRecords={setRecords} today={date}/>
 
         </section>
         </>

@@ -27,7 +27,7 @@ const data: SidebarItem[] = [
         icon: <svg {...iconProps}><path d="M3 11l9-8 9 8" /><path d="M5 10v10h5v-6h4v6h5V10" /></svg>,
     },
     {
-        id: 2, title: '한눈에 보기', url: '/all',
+        id: 2, title: '한눈에 보기', url: '/calender',
         icon: <svg {...iconProps}><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>,
     },
     {

@@ -1,27 +1,47 @@
+"use client"
+
+import { useState } from "react";
 import RecordForm from "@/components/recode/recode-form";
+import { dateFormat, subDate, addDate, atToday} from "@/app/utils/date"
 
 const moods = ['뿌듯해요', '평온해요', '아쉬워요'];
 
 export default function Page() {
+
+    const [ getDate, setDate ] = useState(new Date());
+
+    function changeDate(type: 'prev' | 'next') {
+        setDate(prev => type === 'prev' ? subDate(prev) : addDate(prev));
+    }
+
     return (
         <>
         <header className="flex h-[82px] items-center justify-end gap-8 border-b border-line px-14">
             <div className="flex items-center gap-5 text-[15px] font-medium">
-                <button aria-label="이전 날짜" className="text-muted">
+                <button aria-label="이전 날짜" className="text-muted" 
+                    onClick={() => changeDate('prev')} 
+                >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
                 </button>
                 <span className="flex items-center gap-2.5">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
-                    10월 20일 화요일
+                    { dateFormat(getDate, 'MM월 dd일 (EEE)') }
                 </span>
-                <button aria-label="다음 날짜" className="text-muted">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
-                </button>
+                {
+                    !atToday(getDate) && (
+                        <button aria-label="다음 날짜" className="text-muted" 
+                            onClick={() => changeDate('next')}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    )
+                }
+                <button onClick={() => setDate(new Date()) }>Today</button>
             </div>
         </header>
 
         <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-10 px-14 pb-16 pt-14">
-            <RecordForm />
+            <RecordForm date={dateFormat(getDate)} atToday={!atToday(getDate)}/>
 
             <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="rounded-[28px] border border-brand/10 bg-brand-soft/70 p-8">

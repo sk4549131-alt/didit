@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction } from "react"
-// utils
-import { dateKey } from "@/app/utils/storage"
 
 type Props = {
     records: Record<string, RecordType[]>,
-    setRecords: Dispatch<SetStateAction<Record<string, RecordType[]>>>
+    setRecords: Dispatch<SetStateAction<Record<string, RecordType[]>>>,
+    today: string
 }
 
 type RecordType = {
@@ -14,12 +13,13 @@ type RecordType = {
     category: string
 }
 
-export default function RecodeList({ records, setRecords } : Props) {
+export default function RecodeList({ records, setRecords, today } : Props) {
+    const todayRecords = (today && records[today]) || [];
 
     function removeList(id: number) {
         setRecords(prev => ({
             ...prev,
-            [dateKey()]: (prev[dateKey()] ?? []).filter(data => data.id === id)
+            [today]: (prev[today] ?? []).filter(data => data.id !== id)
         }))
     }
 
@@ -30,7 +30,7 @@ export default function RecodeList({ records, setRecords } : Props) {
                 <span className="text-[13px] text-muted">총 {Object(records).length}개</span>
             </div>
             <ul className="mt-6 flex flex-col gap-7">
-                {records[dateKey()].map(r => (
+                {todayRecords.map(r => (
                     <li key={r.id} className="group flex items-center gap-5 px-2">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
