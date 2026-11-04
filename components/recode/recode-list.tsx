@@ -1,26 +1,27 @@
 import { Dispatch, SetStateAction } from "react"
+// type
+import { type RecordYear, RecordType } from '@/app/types/record';
 
 type Props = {
-    records: Record<string, RecordType[]>,
-    setRecords: Dispatch<SetStateAction<Record<string, RecordType[]>>>,
-    today: string
+    records: RecordType[],
+    setRecords: Dispatch<SetStateAction<RecordYear>>,
+    dateKey: { y: string, m: string, d: string },
 }
 
-type RecordType = {
-    id: number
-    title: string
-    time: string
-    category: string
-}
+export default function RecodeList({ records, setRecords , dateKey} : Props) {
+    function removeList(id: string) {
+        const { y, m, d } = dateKey;
 
-export default function RecodeList({ records, setRecords, today } : Props) {
-    const todayRecords = (today && records[today]) || [];
-
-    function removeList(id: number) {
         setRecords(prev => ({
             ...prev,
-            [today]: (prev[today] ?? []).filter(data => data.id !== id)
-        }))
+            [y]: {
+                ...prev[y],
+                [m]: {
+                    ...prev[y]?.[m],
+                    [d]: (prev[y]?.[m]?.[d] ?? []).filter(data => data.id !== id),
+                },
+            },
+        }));
     }
 
     return (
@@ -30,7 +31,7 @@ export default function RecodeList({ records, setRecords, today } : Props) {
                 <span className="text-[13px] text-muted">총 {Object(records).length}개</span>
             </div>
             <ul className="mt-6 flex flex-col gap-7">
-                {todayRecords.map(r => (
+                {records.map(r => (
                     <li key={r.id} className="group flex items-center gap-5 px-2">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>

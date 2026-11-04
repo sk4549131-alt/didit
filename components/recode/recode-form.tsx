@@ -3,26 +3,28 @@
 import Select from "@/components/ui/select";
 import RecodeList from "@/components/recode/recode-list";
 import { useState, useEffect } from "react";
+import { dateFormat } from "@/app/utils/date";
+// type
+import { type RecordYear } from '@/app/types/record';
 
 type Props = {
-    date: string,
+    date: Date,
     atToday: boolean
 }
 
-type RecordType = {
-    id: number
-    title: string
-    time: string
-    category: string
-}
-
 export default function RecordForm({ date, atToday } : Props) {
-    const [records, setRecords] = useState<Record<string, RecordType[]>>({});
+    const [records, setRecords] = useState<RecordYear>({});
     const [form, setForm] = useState({ title: '', category: '일상' });
     const [loaded, setLoaded] = useState(false);
-    const todayCount = records[date]?.length ?? 0;
+    const key = {
+        y: dateFormat(date, 'yyyy'),
+        m: dateFormat(date, 'MM'),
+        d: dateFormat(date, 'dd'),
+    };
+    const dayRecords = records[key.y]?.[key.m]?.[key.d] ?? [];
 
     useEffect(() => {
+        // Localstroage에서 불러오기
         console.log("load effect", performance.now());
         const raw = localStorage.getItem('items');
         if (raw) setRecords(JSON.parse(raw));
@@ -35,18 +37,26 @@ export default function RecordForm({ date, atToday } : Props) {
     }, [records, loaded]);
 
     function addList() {
-        if (form?.title !== '') {;
+        if (form?.title.trim() !== '') {
+            const { y, m, d } = key;
+            const dateNow = new Date();
+
+            const newItem = { 
+                id: crypto.randomUUID(),
+                title: form.title, 
+                time: dateFormat(dateNow, 'hh:mm a'),
+                category: form.category
+            }
+
             setRecords(prev => ({
                 ...prev,
-                [date]: [
-                    ...prev[date] ?? [],
-                    { 
-                        id: Date.now(),
-                        title: form.title, 
-                        time: new Date().toLocaleTimeString(),
-                        category: form.category
-                    }
-                ] 
+                [y]: {
+                    ...prev[y],
+                    [m]: {
+                        ...prev[y]?.[m],
+                        [d]: [...(prev[y]?.[m]?.[d] ?? []), newItem],
+                    },
+                },
             }));
 
             setForm({ title: '', category: '일상' });
@@ -62,10 +72,12 @@ export default function RecordForm({ date, atToday } : Props) {
                 <p className="mt-4 text-[15px] text-muted">해야 할 일보다, 해낸 일에 집중하는 시간</p>
             </div>
             <div className="flex items-center gap-4 rounded-2xl border border-line bg-white/60 px-7 py-5">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">{todayCount}</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand">
+                    { dayRecords?.length ?? 0 }
+                </span>
                 <div>
                     <p className="text-xs text-muted">오늘의 완료</p>
-                    <p className="text-[15px] font-bold">{todayCount}개의 작은 성취</p>
+                    <p className="text-[15px] font-bold">{dayRecords.length}개의 작은 성취</p>
                 </div>
             </div>
         </section>
@@ -101,9 +113,8 @@ export default function RecordForm({ date, atToday } : Props) {
                     </button>
                 </div>
             </div>
-
-            <RecodeList records={records} setRecords={setRecords} today={date}/>
-
+            { /* 리스트 */}
+            <RecodeList records={dayRecords} setRecords={setRecords} dateKey={key} />
         </section>
         </>
     )

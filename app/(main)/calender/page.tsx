@@ -42,22 +42,6 @@ export default function Page() {
 
     return (
         <>
-        <header className="flex h-[82px] items-center justify-end gap-8 border-b border-line px-14">
-            <div className="flex items-center gap-5 text-[15px] font-medium">
-                <button aria-label="이전 날짜" className="text-muted">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
-                </button>
-                <span className="flex items-center gap-2.5">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
-                    11월 3일 (화)
-                </span>
-                <button aria-label="다음 날짜" className="text-muted">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
-                </button>
-                <button className="rounded-full bg-brand-soft px-4 py-2 text-[13px] font-medium tracking-wider text-brand">TODAY</button>
-            </div>
-        </header>
-
         <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-8 px-14 pb-16 pt-14">
             <section>
                 <p className="text-[12px] font-bold tracking-[0.18em] text-muted">MONTHLY VIEW</p>
